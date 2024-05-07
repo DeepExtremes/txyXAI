@@ -1,0 +1,11 @@
+#git rm -r --cached .
+#git add .
+
+*.png
+*.jpg
+*__pycache__/
+*.py[cod]
+*events.out*
+*.ipynb_checkpoints/
+
+!readme_media/*

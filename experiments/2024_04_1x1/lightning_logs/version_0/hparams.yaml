@@ -1,0 +1,289 @@
+blind_test: false
+config:
+  arch:
+    chunk_size: null
+    difference_to_clima: true
+    dilation: 1
+    input_dimension: !!python/tuple
+    - 24
+    - 35
+    - 9
+    lstm_convs_per_layer: 1
+    lstm_hidden_size: 150
+    lstm_kernel_size: !!python/tuple
+    - 1
+    - 1
+    lstm_num_layers: 3
+    mlp_layer_sizes:
+    - 10
+    num_classes: 4
+    random_zeroing_duration: null
+    user_defined: true
+  data:
+    augment:
+      flip: true
+      rotate90: true
+    blacklist_path: /home/oscar/DeepExtremesXAI/subsets/bad_cubes_final.txt
+    classes:
+      txy_cat:
+      - 0: no_data
+        1: saturated_or_defective
+        2: dark_area_pixels
+        3: cloud_shadows
+        4: vegetation
+        5: bare_soils
+        6: water
+        7: clouds_low_probability_or_unclassified
+        8: clouds_medium_probability
+        9: clouds_high_probability
+        10: cirrus
+        11: snow_or_ice
+      txy_mask:
+      - 0: free_sky
+        1: cloud
+        2: snow
+        3: cloud_shadows
+        4: masked_other_reasons
+      xy_cat:
+      - 10: no_data
+        11: cropland_rainfed
+        12: cropland_rainfed_herbaceous_cover
+        20: cropland_rainfed_tree_or_shrub_cover
+        30: cropland_irrigated
+        40: mosaic_cropland
+        50: mosaic_natural_vegetation
+        60: tree_broadleaved_evergreen_closed_to_open
+        61: tree_broadleaved_deciduous_closed_to_open
+        62: tree_broadleaved_deciduous_closed
+        70: tree_broadleaved_deciduous_open
+        71: tree_needleleaved_evergreen_closed_to_open
+        72: tree_needleleaved_evergreen_closed
+        80: tree_needleleaved_evergreen_open
+        81: tree_needleleaved_deciduous_closed_to_open
+        82: tree_needleleaved_deciduous_closed
+        90: tree_needleleaved_deciduous_open
+        100: tree_mixed
+        110: mosaic_tree_and_shrub
+        120: mosaic_herbaceous
+        121: shrubland
+        122: shrubland_evergreen
+        130: shrubland_deciduous
+        140: grassland
+        150: lichens_and_mosses
+        151: sparse_vegetation
+        152: sparse_tree
+        153: sparse_shrub
+        160: sparse_herbaceous
+        170: tree_cover_flooded_fresh_or_brakish_water
+        180: tree_cover_flooded_saline_water
+        190: shrub_or_herbaceous_cover_flooded
+        200: urban
+        201: bare_areas
+        202: bare_areas_consolidated
+    classes_process:
+      txy_cat:
+      - null
+      txy_mask:
+      - - 1
+        - 3
+        - 4
+      xy_cat:
+      - null
+    compute:
+      clima: true
+      clima_next: true
+      detrend_txy: false
+      era5_clima: true
+      era5_clima_delete_mean: true
+      era5_clima_delete_min_max_clima: true
+      era5_clima_detrend_min_max: true
+      ignore_first_N: 146
+      low_res: false
+      ndvi: false
+      return_as_pytorch: true
+      return_just_cubes: false
+      return_labels_t: true
+      sanitization_limits: !!python/tuple
+      - -5
+      - 5
+      smooth_clima: 1
+      t_next: true
+      xy_real_mean_dev: false
+    datacubes_path: /scratch/users/deepextremes
+    minmax:
+      t_real_minmax:
+      - 0.0025041749448515473
+      - 0.012208842822908345
+      - 6262440.3864
+      - 3394.3465218749498
+      - 5197468.781599337
+      - 8231326.5132
+      - 20.253179840087892
+      - 0.02629283503293989
+      - 0.0025041749448515473
+      - 0.012208842822908345
+      - 6262440.3864
+      - 3394.3465218749498
+      - 5197468.781599337
+      - 8231326.5132
+      - 20.253179840087892
+      - 0.02629283503293989
+      - !!python/tuple
+        - -0.0036388258449733257
+        - 7.505431858589873e-05
+      - !!python/tuple
+        - -0.029522577300667763
+        - 5.541076461668126e-05
+      - !!python/tuple
+        - -9099976.0
+        - 223287.3125
+      - !!python/tuple
+        - 51622.5546875
+        - 102771.5703125
+      - !!python/tuple
+        - -8806705.0
+        - 2158302.25
+      - !!python/tuple
+        - -0.003333333181217313
+        - 17229930.0
+      - !!python/tuple
+        - 236.65975952148438
+        - 312.64947509765625
+      - !!python/tuple
+        - 3.0870606337884965e-07
+        - 0.017818428575992584
+      txy_real_minmax:
+      - 1.0
+      - 1.0
+      - 1.0
+      - 1.0
+      - 1.0
+      - 1.0
+      - 1.0
+      - 1.0
+      xy_real_minmax:
+      - 8849.0
+    name: DeepExtremes
+    prediction_period: 1
+    registry_path: /scratch/users/deepextremes/deepextremes-minicubes/registry_2023_11_03_11_20_21.csv
+    registry_read_until: 11/20/2023
+    split:
+      test: 0.15
+      train: 0.75
+      val: 0.1
+    test_start_date: 10/08/2021
+    testlist_csv: /scratch/users/deepextremes/demc_full_10groups_50km.csv
+    testlist_fold: 5
+    testlist_path: null
+    variables:
+      labels_t:
+      - event_labels
+      predict_features:
+      - B02
+      - B03
+      - B04
+      - B8A
+      t_real:
+      - e_min
+      - pev_min
+      - slhf_min
+      - sp_min
+      - sshf_min
+      - ssr_min
+      - t2m_min
+      - tp_min
+      - e_max
+      - pev_max
+      - slhf_max
+      - sp_max
+      - sshf_max
+      - ssr_max
+      - t2m_max
+      - tp_max
+      - e_mean
+      - pev_mean
+      - slhf_mean
+      - sp_mean
+      - sshf_mean
+      - ssr_mean
+      - t2m_mean
+      - tp_mean
+      txy_cat: []
+      txy_mask:
+      - cloudmask_en
+      txy_real:
+      - B02
+      - B03
+      - B04
+      - B8A
+      use_txy_mask_as_input: true
+      xy_cat:
+      - lccs_class
+      xy_real:
+      - cop_dem
+    versions: null
+  debug: false
+  evaluation:
+    metrics:
+      L1_custom: {}
+      MeanSquaredError:
+        squared: false
+      NormalizedNashSutcliffeEfficiency_custom: {}
+      R2Score: {}
+    not_apply_metrics_to_channels:
+    - 0
+    - 1
+    - 2
+    - 3
+  experiment_id: 2024_04_1x1
+  implementation:
+    band_names:
+    - B02
+    - B03
+    - B04
+    - B8A
+    clima_names:
+    - B02_clima_next
+    - B03_clima_next
+    - B04_clima_next
+    - B8A_clima_next
+    cloud_mask_name: cloudmask_en:cloud_OR_cloud_shadows_OR_masked_other_reasons
+    data_loader:
+      num_workers: 4
+    loss:
+      masked: true
+      package: torch.nn
+      params:
+        lam: 1.0
+        reduction: none
+        weights:
+        - 0.125
+        - 0.125
+        - 0.125
+        - 0.125
+        - 0.5
+      type: L1L2Loss
+      user_defined: true
+    optimizer:
+      gclip_value: 0
+      lr: 0.001
+      lr_correction: {}
+      type: AdamW
+    trainer:
+      accelerator: gpu
+      accumulate_grad_batches: 8
+      devices: 1
+      early_stop: 10000
+      epochs: 4
+      monitor:
+        metric: NormalizedNashSutcliffeEfficiency_custom_NNSE
+        split: val
+      monitor_mode: min
+      plot_every_epoch: 1
+      precission: 32
+      test_batch_size: 1
+      train_batch_size: 1
+      val_batch_size: 1
+  save_path: experiments/2024_04_1x1
+  seed: 42
+naive: null
