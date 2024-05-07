@@ -8,7 +8,7 @@ This repository contains code to:
  - Train deep learning models that use temporal data (t), spatial data (xy), spatio-temporal data (txy) or all at the same time (see [The EarthExtremes dataset](#the-earthextremes-dataset) for an example of such data).
  - Visualize high-dimensional spatio-temporal data through (all plots in section [The EarthExtremes dataset](#the-earthextremes-dataset) were generated using these tools). See [`visualization.py` section](#visualizationpy)
  - Perform eXplainable AI (XAI) on highly-dimensional data (t, xy, txy) using a wide variety of options. See [`XAI.py` section](#xaipy)
- - Visualize the XAI results (for t, xy, txy) data and make sense of them at a local level (a single input), and global level (by combining predictions from several inputs in a variety of ways). See [`XAI_plot.py` section](#xai-plotpy)
+ - Visualize the XAI results (for t, xy, txy) data and make sense of them at a local level (a single input), and global level (by combining predictions from several inputs in a variety of ways). See [`XAI_plot.py` section](#xai_plotpy)
 
 It uses that code for a specific application:
  - To train a convLSTM on the [EarthExtremes dataset](#) that predicts reflectances at the new timestep.
