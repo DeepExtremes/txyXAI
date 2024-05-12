@@ -6,7 +6,7 @@ EXplainable Artificial intelligence for spatio-temporal data. If you use any of 
 
 This repository contains code to:
  - Train deep learning models that use temporal data (t), spatial data (xy), spatio-temporal data (txy) or all at the same time (see [The EarthExtremes dataset](#the-earthextremes-dataset) for an example of such data).
- - Visualize high-dimensional spatio-temporal data through (all plots in section [The EarthExtremes dataset](#the-earthextremes-dataset) were generated using these tools). See [`visualization.py` section](#visualizationpy)
+ - Visualize high-dimensional spatio-temporal data through (all plots in section [The EarthExtremes dataset](#the-earthextremes-dataset) were generated using these tools). See [`txyvis` section](#txyvis)
  - Perform eXplainable AI (XAI) on highly-dimensional data (t, xy, txy) using a wide variety of options. See [`XAI.py` section](#xaipy)
  - Visualize the XAI results (for t, xy, txy) data and make sense of them at a local level (a single input), and global level (by combining predictions from several inputs in a variety of ways). See [`XAI_plot.py` section](#xai_plotpy)
 
@@ -69,7 +69,6 @@ Other variables include:
   - `XAI_plot.py`: Code for plotting attributions for 1D, 2D (using 3D plot), 3D, and N-D data
   - `XAI_utils.py`: Utilities
   - `XAI_deepextremes_loader.py`: Custom dataset for EarthExtremes to feed `XAI.py` the data that it needs to peform XAI. It is an absract class as some information is left by the user to be implemented depeding on their model (e.g. the model in this repo or the model in  [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de)
-  - `visualization.py`: Code for plotting highly dimensional data alongside masks, etc. Supports matplotlib as well as direct generation of images without matpltib. See [`visualization.py` section](#visualizationpy)
   - `model_manager.py`: Contains class `ModelManager` for managing the training and evaluation of general pytorch lightning models
   - `model_xytmodel.py`: Contains abstract class `xytModel` implementing a pytorch lightning model for dealing with spatio-temporal data. It can be especialized by any suitable backend, such as `xytConvLSTM` and `xytConvTransformer`. This file also contains custom metrics and losses
   - `model_convLSTM.py`: convLSTM generic model
@@ -97,6 +96,8 @@ mamba activate txyxai
 
 git clone https://github.com/DeepExtremes/txyXAI
 cd txyXAI
+
+pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
 If that does not work, or you want to use the latest versions of all packages:
@@ -114,6 +115,7 @@ mamba install pytorch torchvision pytorch-cuda captum torchmetrics pytorch-light
 
 #Others
 pip install lovely-tensors opencv-python textalloc zarr
+pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
 ## Running the notebooks for EarthExtremes
@@ -138,9 +140,17 @@ cd earthnet-models-pytorch
 pip install -e .
 ```
 
-## `visualization.py`
+## `txyvis`
 
-Custom visualization of highly-dimensional data (specially multichannel spatio-temporal). Here are some example plots:
+Custom visualization of highly-dimensional data (specially multichannel spatio-temporal) with matplotlib and numpy backends. This code now lives in its own [txyvis repository](https://github.com/OscarPellicer/txyvis)
+
+To install:
+
+```{Bash}
+pip install git+https://github.com/OscarPellicer/txyvis.git
+```
+
+Here are some example plots:
 
 We can have an arbitrary number of color bars (for different channels), that have esily customizable `limits`, that can be `center`ed around zero or not, and with custom `cmaps`, allowing for the easy visualization of several image modalities / bands / channels. If images are have three channels (they either have 1 or 3), then they are assumed to be RGB. The example below uses two different color bars:
 ![Example of visualization.py](readme_media/vis1.png)

@@ -9,7 +9,7 @@ from pathlib import Path
 import matplotlib as mpl
 
 #Custom imports
-from .visualization import plot_maps
+from txyvis import plot_maps
 
 #Global configuration
 NDVI='kNDVI' #['NDVI' or 'kNDVI']
@@ -217,8 +217,8 @@ def plot_clima(all_clima, all_clima_count, t_unique, compute_ndvi):
                     matplotlib_backend_kwargs={'text_size':FONT_SIZE})
         return fig, axes
 
-def plot_txy(txy_real, txy_mask, t, plot_idx, plot_names, title='', select=slice(50,150,7),
-             labels_t=None):
+def plot_txy(txy_real, txy_mask, t, plot_idx, plot_names, title='', select=slice(50,150,7), 
+             plot_mask=True):
     'Plot txy_real and txy_mask data'
     #Notice: c t lon lat -> t c lon lat
     backend= 'numpy'
@@ -241,8 +241,9 @@ def plot_txy(txy_real, txy_mask, t, plot_idx, plot_names, title='', select=slice
         title=title, backend=backend,
         numpy_backend_kwargs={'size':13, 'color':'black', 'xstep':4,
                               'labels':'grid', 'font':'OpenSans_Condensed-Regular.ttf'},
-        plot_mask_channel=0, matplotlib_backend_kwargs={'text_size':FONT_SIZE},
+        plot_mask_channel=0 if plot_mask else None, matplotlib_backend_kwargs={'text_size':FONT_SIZE},
         figsize=(27.5,10),
+        stack_every=73, #Stack every year (approx.) 73*5=365
                     )
     return stuff
 

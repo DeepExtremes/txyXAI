@@ -677,7 +677,6 @@ class DeepExtremes(torch.utils.data.Dataset):
             offset+= base_offset
         stuff= plot_txy(self.last_data['txy_real'], self.last_data['txy_mask'], self.last_t_idx, 
                         channels, labels, select=select, #title=f'{self.last_cid} ({select=})'
-                        labels_t=self.last_labels_t
                                     )
         if self.debug: 
             if len(stuff)==2:

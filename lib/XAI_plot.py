@@ -12,7 +12,7 @@ from functools import reduce
 import cv2
 
 #Custom
-from .visualization import plot_maps
+from txyvis import plot_maps
 from .data_utils import setup_matplotlib, _get_plot_cmap, _get_plot_center, _get_plot_limits
 
 #Changes some defaults to reproduce the plots in the paper
