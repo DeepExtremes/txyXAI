@@ -132,12 +132,19 @@ There are three notebooks that we can run, which are well-documented all througo
 - [`xai_emp.ipynb`](xai_emp.ipynb) performs a variety of XAI tasks on a model trained on EarthExtremes using [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de) instead. This serves as an example of how you could adapt the XAI to your own model.
 - [`utils.ipynb`](utils.ipynb) contains code for plotting [a map](#the-earthextremes-dataset) with all the minicubes in the EarhtExtremes dataset, for creating lists of bad cubes (either no ERA5 data, no Sentinel2, empty, or other reasons), etc.
  
-For the last notebook, we additionally need to install `earthnet-models-pytorch`:
-```{Bash}
-cd ~
-git clone https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de.git
-cd earthnet-models-pytorch
-pip install -e .
+For `xai_emp.ipynb`, we need to create another environment with the `earthnet_models_pytorch` requirements dependencies + some dependencies for the XAI code:
+```
+#Create emp environment
+mamba create -n emp
+mamba activate emp
+
+#Install earthnet_models_pytorch's appropriate branch
+pip install git+https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de.git
+
+#Install requirements for running this notebook
+pip install lovely-tensors opencv-python
+mamba install captum
+pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
 ## `txyvis`
