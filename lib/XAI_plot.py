@@ -18,6 +18,9 @@ from .data_utils import setup_matplotlib, _get_plot_cmap, _get_plot_center, _get
 #Changes some defaults to reproduce the plots in the paper
 PAPER_STYLE= False
 
+#For earthnet-models-pytorch
+EMP= False
+
 def plot_explained_variance(explained_variance_ratio, name, save_path=None):
     fig, ax= plt.subplots(1,1, figsize=(7,7))
     ax.plot(np.cumsum(explained_variance_ratio))
@@ -76,6 +79,7 @@ def plot_attribution(a_plot, t_plot, l_plot, p_plot, m_plot, x_shape, y_shape, f
             offsets= (-30, 4) #(-9, 4)
             plot_ts= np.s_[max(0, np.min(selected_ts) + offsets[0]):
                                   min(l_plot.shape[2], np.max(selected_ts) + offsets[1])]
+            if EMP: plot_ts= slice(60,84,None) #For earthnet-models-pytorch
     else:
         plot_ts= np.s_[:]
 

@@ -147,6 +147,8 @@ mamba install captum
 pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
+Addtionally, you will need a model checkpoint (you set the path in the notebook's variable `checkpoint_path`), as well as the EartheExtremes collection, but interpolated in the context period, which can be obtained from a standard EarthExtremes distribution by running `earthnet-models-pytorch`'s `scripts/preprocessing/de23_add_interpolation.py` on the datasest. Please, contact `earthnet-models-pytorch`'s library creators for more information in these regards.
+
 ## `txyvis`
 
 Custom visualization of highly-dimensional data (specially multichannel spatio-temporal) with matplotlib and numpy backends. This code now lives in its own [txyvis repository](https://github.com/OscarPellicer/txyvis)
