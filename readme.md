@@ -5,22 +5,22 @@ EXplainable Artificial intelligence for spatio-temporal data. If you use any of 
 >Paper under review
 
 This repository contains code to:
- - Train deep learning models that use temporal data (t), spatial data (xy), spatio-temporal data (txy) or all at the same time (see [The EarthExtremes dataset](#the-earthextremes-dataset) for an example of such data).
- - Visualize high-dimensional spatio-temporal data through (all plots in section [The EarthExtremes dataset](#the-earthextremes-dataset) were generated using these tools). See [`txyvis` section](#txyvis)
+ - Train deep learning models that use temporal data (t), spatial data (xy), spatio-temporal data (txy) or all at the same time (see [The DeepExtremeCubes dataset](#the-deepextremecubes-dataset) for an example of such data).
+ - Visualize high-dimensional spatio-temporal data through (all plots in section [The DeepExtremeCubes dataset](#the-deepextremecubes-dataset) were generated using these tools). See [`txyvis` section](#txyvis)
  - Perform eXplainable AI (XAI) on highly-dimensional data (t, xy, txy) using a wide variety of options. See [`XAI.py` section](#xaipy)
  - Visualize the XAI results (for t, xy, txy) data and make sense of them at a local level (a single input), and global level (by combining predictions from several inputs in a variety of ways). See [`XAI_plot.py` section](#xai_plotpy)
 
 It uses that code for a specific application:
- - To train a convLSTM on the [EarthExtremes dataset](#) that predicts reflectances at the new timestep.
+ - To train a convLSTM on the [DeepExtremeCubes dataset](#) that predicts reflectances at the new timestep.
  - Performs eXplainable AI (XAI) on this model.
  
-See [Running the notebooks for EarthExtremes](#running-the-notebooks-for-earthextremes) section.
+See [Running the notebooks for DeepExtremeCubes](#running-the-notebooks-for-deepextremecubes) section.
  
-## The EarthExtremes dataset
+## The DeepExtremeCubes dataset
 
-The EarthExtremes dataset contains approx. 40.000 128px x 128px Sentinel-2 minicubes sampled from January 2016 (start of the Setinel-2 mission) until December 2022. For more information on this dataset, please refer to [paper under review](#).
+The DeepExtremeCubes dataset contains approx. 40.000 128px x 128px Sentinel-2 minicubes sampled from January 2016 (start of the Setinel-2 mission) until December 2022. For more information on this dataset, please refer to [paper under review](#).
 
-![EarthExtremes map](readme_media/map.png)
+![DeepExtremeCubes map](readme_media/map.png)
 >Map of the geographical distribution of the minicubes according to the subset to which they belong (red: train, green: validation, blue: test). Also, events with a duration of at least 10 days have been labeled on the map, along with their duration.
 
 The dataset contains the following variables
@@ -68,25 +68,25 @@ Other variables include:
   - `XAI_attribute.py`: Code for performing attribution
   - `XAI_plot.py`: Code for plotting attributions for 1D, 2D (using 3D plot), 3D, and N-D data
   - `XAI_utils.py`: Utilities
-  - `XAI_deepextremes_loader.py`: Custom dataset for EarthExtremes to feed `XAI.py` the data that it needs to peform XAI. It is an absract class as some information is left by the user to be implemented depeding on their model (e.g. the model in this repo or the model in  [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de)
+  - `XAI_deepextremes_loader.py`: Custom dataset for DeepExtremeCubes to feed `XAI.py` the data that it needs to peform XAI. It is an absract class as some information is left by the user to be implemented depeding on their model (e.g. the model in this repo or the model in  [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de)
   - `model_manager.py`: Contains class `ModelManager` for managing the training and evaluation of general pytorch lightning models
   - `model_xytmodel.py`: Contains abstract class `xytModel` implementing a pytorch lightning model for dealing with spatio-temporal data. It can be especialized by any suitable backend, such as `xytConvLSTM` and `xytConvTransformer`. This file also contains custom metrics and losses
   - `model_convLSTM.py`: convLSTM generic model
   - `model_transformer.py`: transformer generic model
-  - `data_loader.py`: A dataloader for EarthExtremes dataset, but defined in a generic way to be easily adaptable to other spatio-temporal problems
+  - `data_loader.py`: A dataloader for DeepExtremeCubes dataset, but defined in a generic way to be easily adaptable to other spatio-temporal problems
   - `data_utils.py`: A collection of utilities for handling data
-  - `aggregateevents.py`: Custom script to aggregate the events in the EarthExtremes dataset (a custom preprocessing step)
-- `/subsets` contains additional metadata about the EarthExtremes dataset
-  - `bad_cubes_final.txt`: EarthExtremes Cube IDs with problems (either no ERA5 data, no Sentinel2, empty, or other reasons)
+  - `aggregateevents.py`: Custom script to aggregate the events in the DeepExtremeCubes dataset (a custom preprocessing step)
+- `/subsets` contains additional metadata about the DeepExtremeCubes dataset
+  - `bad_cubes_final.txt`: DeepExtremeCubes Cube IDs with problems (either no ERA5 data, no Sentinel2, empty, or other reasons)
   - `demc_full_10groups_50km.csv` File containing the splits for K-fold cross validation of the model 
-- `training.ipynb` training and validation for a txyXAI model trained on EarthExtremes
+- `training.ipynb` training and validation for a txyXAI model trained on DeepExtremeCubes
 - `xai.ipynb` performs a variety of XAI tasks on that model
-- `xai_emp.ipynb` performs a variety of XAI tasks on a model trained on EarthExtremes using [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de) instead. This serves as an example of how you could adapt the XAI to your own model.
-- `utils.ipynb` contains code for plotting [a map](#the-earthextremes-dataset) with all the minicubes in the EarhtExtremes dataset, for creating lists of bad cubes (either no ERA5 data, no Sentinel2, empty, or other reasons), etc.
+- `xai_emp.ipynb` performs a variety of XAI tasks on a model trained on DeepExtremeCubes using [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de) instead. This serves as an example of how you could adapt the XAI to your own model.
+- `utils.ipynb` contains code for plotting [a map](#the-deepextremecubes-dataset) with all the minicubes in the EarhtExtremes dataset, for creating lists of bad cubes (either no ERA5 data, no Sentinel2, empty, or other reasons), etc.
 
 ## Installation instructions
 
-Download and install [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) (or just use Anaconda / Miniconda, but mamba is much better)
+Download and install [mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html) (or just use Anaconda / Miniconda)
 
 Now, yout can try to install the fixed-version packages using conda / mamba.
 
@@ -118,8 +118,6 @@ pip install lovely-tensors opencv-python textalloc zarr
 pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
-## Running the notebooks for EarthExtremes
-
 First, lunch Jupyter Lab:
 ```{Bash}
 jupyter lab
@@ -127,11 +125,13 @@ jupyter lab
 
 There are three notebooks that we can run, which are well-documented all througout:
 
-- [`training.ipynb`](training.ipynb) training and validation for a txyXAI model trained on EarthExtremes.
+- [`training.ipynb`](training.ipynb) training and validation for a txyXAI model trained on DeepExtremeCubes.
 - [`xai.ipynb`](xai.ipynb) performs a variety of XAI tasks on that model.
-- [`xai_emp.ipynb`](xai_emp.ipynb) performs a variety of XAI tasks on a model trained on EarthExtremes using [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de) instead. This serves as an example of how you could adapt the XAI to your own model.
-- [`utils.ipynb`](utils.ipynb) contains code for plotting [a map](#the-earthextremes-dataset) with all the minicubes in the EarhtExtremes dataset, for creating lists of bad cubes (either no ERA5 data, no Sentinel2, empty, or other reasons), etc.
+- [`xai_emp.ipynb`](xai_emp.ipynb) performs a variety of XAI tasks on a model trained on DeepExtremeCubes using [`earthnet_models_pytorch`](https://github.com/earthnet2021/earthnet-models-pytorch/tree/melanie-de) instead. This serves as an example of how you could adapt the XAI to your own model.
+- [`utils.ipynb`](utils.ipynb) contains code for plotting [a map](#the-deepextremecubes-dataset) with all the minicubes in the EarhtExtremes dataset, for creating lists of bad cubes (either no ERA5 data, no Sentinel2, empty, or other reasons), etc.
  
+## Running the notebooks for DeepExtremeCubes
+
 For `xai_emp.ipynb`, we need to create another environment with the `earthnet_models_pytorch` requirements dependencies + some dependencies for the XAI code:
 ```
 #Create emp environment
@@ -147,7 +147,7 @@ mamba install captum
 pip install git+https://github.com/OscarPellicer/txyvis.git
 ```
 
-Addtionally, you will need a model checkpoint (you set the path in the notebook's variable `checkpoint_path`), as well as the EartheExtremes collection, but interpolated in the context period, which can be obtained from a standard EarthExtremes distribution by running `earthnet-models-pytorch`'s `scripts/preprocessing/de23_add_interpolation.py` on the datasest. Please, contact `earthnet-models-pytorch`'s library creators for more information in these regards.
+Addtionally, you will need a model checkpoint (you set the path in the notebook's variable `checkpoint_path`), as well as the EartheExtremes collection, but interpolated in the context period, which can be obtained from a standard DeepExtremeCubes distribution by running `earthnet-models-pytorch`'s `scripts/preprocessing/de23_add_interpolation.py` on the datasest. Please, contact `earthnet-models-pytorch`'s library creators for more information in these regards.
 
 ## `txyvis`
 
