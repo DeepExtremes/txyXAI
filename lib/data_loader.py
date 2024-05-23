@@ -56,9 +56,9 @@ class DeepExtremes(torch.utils.data.Dataset):
         self.registry= self.registry[self.registry.modification_date < registry_read_until]        
         
         #Get a list of all downloaded minicube ids and keep only those that are also in the csv (just to be sure)
-        cubes_list= list(self.datacubes_path.glob('deepextremes-minicubes/*/*/*.zarr'))
+        cubes_list= list(self.datacubes_path.glob('deepextremes-minicubes/*/*.zarr'))
         assert len(cubes_list), f'No files found at {self.datacubes_path} with pattern "*/*.zarr"'
-        cubes_list= ['/'.join(c.parts[-4:]) for c in cubes_list]
+        cubes_list= ['/'.join(c.parts[-3:]) for c in cubes_list]
         self.registry= self.registry[self.registry.path.isin(cubes_list)]
         
         #Load all info from config file    
@@ -90,7 +90,7 @@ class DeepExtremes(torch.utils.data.Dataset):
                                       self.registry[self.registry.mc_id.isin(self.testlist)]])
             assert int(N*test_split) > len(self.testlist), f'Test fraction {test_split=} is too small'+\
                 f' ({int(N*test_split)}) to hold all cubes ({len(self.testlist)}) in {testlist_file=} / {testlist_csv=}'
-                
+        
         #Separate in subsets
         if self.subset == 'train': 
             self.registry= self.registry.iloc[:int(N*train_split)]
