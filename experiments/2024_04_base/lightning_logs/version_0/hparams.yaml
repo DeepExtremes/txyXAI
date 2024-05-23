@@ -170,7 +170,7 @@ config:
       train: 0.75
       val: 0.1
     test_start_date: 10/08/2021
-    testlist_csv: /scratch/users/deepextremes/demc_full_10groups_50km.csv
+    testlist_csv: /home/oscar/DeepExtremesXAI/subsets/demc_full_10groups_50km.csv
     testlist_fold: 5
     testlist_path: null
     variables:
