@@ -13,10 +13,11 @@ import cv2
 
 #Custom
 from txyvis import plot_maps
+from .XAI_utils import event_at_positon
 from .data_utils import setup_matplotlib, _get_plot_cmap, _get_plot_center, _get_plot_limits
 
-#Changes some defaults to reproduce the plots in the paper
-PAPER_STYLE= False
+#Changes some defaults to reproduce the style of the plots in the paper
+PAPER_STYLE= True
 
 #For earthnet-models-pytorch
 EMP= False
@@ -76,7 +77,7 @@ def plot_attribution(a_plot, t_plot, l_plot, p_plot, m_plot, x_shape, y_shape, f
             else:
                 #selected_ts= (m_plot!=0).sum(axis=(0,1,3)).argmax(axis=0)
                 selected_ts= np.argwhere((m_plot!=0).sum(axis=(0,1,3)))[:,0]
-            offsets= (-30, 4) #(-9, 4)
+            offsets= (-9, 4) #(-30, 4)
             plot_ts= np.s_[max(0, np.min(selected_ts) + offsets[0]):
                                   min(l_plot.shape[2], np.max(selected_ts) + offsets[1])]
             if EMP: plot_ts= slice(60,84,None) #For earthnet-models-pytorch
@@ -170,11 +171,17 @@ def plot_attribution(a_plot, t_plot, l_plot, p_plot, m_plot, x_shape, y_shape, f
                 l_plot_ext[:, :, -p_plot.shape[-2]:]= l_plot
                 l_plot, p_plot, m_plot= l_plot_ext, p_plot_ext, m_plot_ext
                 
+            kwargs = {} 
+            # kwargs = {'figsize':(20,10)} if PAPER_STYLE else {}
+            # TODO: Remove this
+            kwargs = {'colorbar_labels':['Attrib.', 'Reflectances', 'kNDVI']} if PAPER_STYLE else {}
+
             plot_attributions_3d(a_plot[:,:,:,plot_ts], t_plot[:,:,plot_ts], l_plot[:,:,plot_ts], 
                  p_plot[:,:,plot_ts], m_plot[:,:,plot_ts],
                  feature_names_item, class_names, save_path=save_path / f'{name} 3d.png',
                  title=f'Attributions', backend='numpy', #outlier_perc=outlier_perc, 
-                 in_channels_rgb=in_channels_rgb_3d, out_channels_rgb=out_channels_rgb_3d
+                 in_channels_rgb=in_channels_rgb_3d, out_channels_rgb=out_channels_rgb_3d,
+                 **kwargs
                             )
 
     if len(x_shape) > 4:
@@ -637,6 +644,12 @@ def plot_attributions_3d(attributions:np.ndarray, inputs:np.ndarray, labels:np.n
 
     #Plot them to an rgb array
     if PAPER_STYLE: backend='matplotlib'
+
+    # TODO: Remove this
+    import sys
+    sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
+    from visualization import plot_maps
+
     arr= plot_maps(
         images= images,
         masks=[m_plot_t]*len(images), #Repat mask len(images) times

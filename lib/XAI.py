@@ -21,6 +21,9 @@ setup_matplotlib(); #Create custom colormap, set default styles
 
 eps = 1e-7 
 
+#Changes some defaults to reproduce the style of the plots in the paper
+PAPER_STYLE= True
+
 #Main XAI class
 class XAI():
     '''
@@ -188,6 +191,9 @@ class XAI():
                     n_in_features= a[event].shape[-1]
                     feature_names.append(self.feature_names[start_idx:start_idx+n_in_features])
                     start_idx+= n_in_features
+
+            # TODO: Remove this
+            if '-58.17_-23.98' not in event: continue
                       
             #Iterate over input tensors
             for i, (attribution_item, input_item, feature_names_item, x_shape)\
@@ -292,7 +298,6 @@ class XAI():
                     attribution_item*=factor.reshape(*([1 for _ in attribution_item.shape[:-1]] + [factor.shape[0]]))
 
                 #Average attributions
-                use_paper_style= True #The non-default style I used for the paper
                 #Visualize attributions for classes vs features aggregated over any amount of extra dimensions
                 pbar.set_description(f'Computing global average attributions [input {i+1}/{len(inputs)}]')
                 figsize_nd=(min(max(9, 17*len(feature_names_item)/15), 25), 9) #(17,9)
@@ -300,10 +305,10 @@ class XAI():
                               np.swapaxes(attribution_item, 0, len(y_shape)), [n_events] + x_shape, list(y_shape), 
                               feature_names_item if not print_non_zero_std else [f'{f} ({100/k:.2f}% non-zero)' 
                               for f,k in zip(feature_names_item, factor)], self.class_names, 
-                              figsize= (6,6) if use_paper_style else figsize_nd,
-                              orientation='h' if use_paper_style else 'v', 
-                              plot_first_N=9 if use_paper_style else 100, 
-                              textwrap_width=17 if use_paper_style else None)
+                              figsize= (6,6) if PAPER_STYLE else figsize_nd,
+                              orientation='h' if PAPER_STYLE else 'v', 
+                              plot_first_N=9 if PAPER_STYLE else 100, 
+                              textwrap_width=17 if PAPER_STYLE else None)
                 fig.savefig(self.save_path / f'{name}_nd.png', dpi=300, bbox_inches='tight')
                 plt.close(fig)
                 

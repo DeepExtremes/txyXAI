@@ -15,6 +15,9 @@ from txyvis import plot_maps
 NDVI='kNDVI' #['NDVI' or 'kNDVI']
 FONT_SIZE= 20
 
+#Changes some defaults to reproduce the style of the plots in the paper
+PAPER_STYLE= True
+
 #Get the nth element (first by default) of every tuple in a list of tuples
 get_nth= lambda l, n=0: [i[n] for i in l]
 
@@ -175,12 +178,13 @@ def _get_plot_cmap(var_name):
     'Returns a cmap for plotting dependig on the name of the variable'
     if 'attr' in var_name.lower(): return 'RdGn'
     #elif 'rgb' in var_name.lower(): return 'hot'
+    elif 'error' in var_name.lower(): return 'bwr'
     elif 'ndvi' in var_name.lower() or 'dev' in var_name.lower(): return 'RdYlGn'
     else: return 'hot'
 
 def _get_plot_center(var_name):
     'Returns a `center` mode plotting dependig on the name of the variable'
-    return 'ndvi' in var_name.lower() or 'mean' in var_name.lower() or 'attr' in var_name.lower()
+    return 'ndvi' in var_name.lower() or 'mean' in var_name.lower() or 'attr' in var_name.lower() or 'error' in var_name.lower()
 
 def _get_plot_limits(var_name):
     'Returns the plotting limits of a variable'
@@ -296,15 +300,16 @@ def plot_t(plot_names, t_real, t, labels_t=None, columns=4):
 def plot_prediction(x, masks, labels, y_pred, 
                     t_y=None, t_data=None, t_events=None, t_plot_names=None, 
                     select=np.s_[150:200:1], title='', N='all', save_path=None, add_index=True, ids=None,
-                    naive=None, plot_infrared=True, backend='numpy'): 
+                    naive=None, plot_infrared=True, backend='numpy', show_error=True): 
     '''
         Plots the first `N` elements of the predicted batch (or all if N='all').
         It expects inputs `x`, `masks`, `labels` and `y_pred` to have dimensions (b c t lon lat)
         and `t_y` to have dimension (t)
     '''
     #Generate custom plots for the paper
-    # select=np.s_[238:252:1]
-    # backend= 'matplotlib'
+    if PAPER_STYLE:
+        select=np.s_[238:252:1]
+        backend= 'matplotlib'
     
     if N=='all': N=len(x)
     N= min(N, len(x))
@@ -321,14 +326,23 @@ def plot_prediction(x, masks, labels, y_pred,
             plot_idx, plot_names= [[0]], [NDVI]
         else:
             if yp_plot.shape[1] == 4:
-                y_plot= np.concatenate([y_plot, _ndvi(y_plot[:, [2]], y_plot[:, [3]])], axis=1)
-                yp_plot= np.concatenate([yp_plot, _ndvi(yp_plot[:, [2]], yp_plot[:, [3]])], axis=1)
+                y_plot= np.concatenate([y_plot, ndvi(y_plot[:, [2]], y_plot[:, [3]])], axis=1)
+                yp_plot= np.concatenate([yp_plot, ndvi(yp_plot[:, [2]], yp_plot[:, [3]])], axis=1)
             else:
                 pass
             if plot_infrared:
                 plot_idx, plot_names= [[2,1,0], [3], [4]], ['RGB', 'B8A', NDVI]
             else:
                 plot_idx, plot_names= [[2,1,0], [4]], ['RGB', NDVI]
+
+        # Create error map if requested
+        error_images = []
+        error_names = []
+        if show_error and 4 in [idx[-1] for idx in plot_idx]:  # If NDVI is being plotted
+            # Calculate error map (prediction - ground truth)
+            ndvi_error = yp_plot[:, [4]] - y_plot[:, [4]]
+            error_images = [ndvi_error[select]]
+            error_names = [f'{NDVI} error']
 
         m_plot_final= np.max(m_plot[select], axis=1, keepdims=True).astype(int)
         if t_events is not None: 
@@ -337,25 +351,32 @@ def plot_prediction(x, masks, labels, y_pred,
             m_plot_final[t_events_plot[select] > 0]= 2 #Create a class for events
             t_y_plot= [f'{ty} [{e}]' if e!=0 else ty for ty, e in zip(t_y_plot, t_events_plot)]
 
+        # TODO: Remove this
+        import sys
+        sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
+        from visualization import plot_maps
+
         #Plot maps
         pred_plot_idx, pred_plot_names= plot_idx, [f'pred. {n}' for n in plot_names]
         id= cid.replace("/","--")
         title_plot= f'{title} {id=} {naive=} events={list(np.unique(t_events_plot)[1:][-15:])} {i=} {select=}'
         arr= plot_maps(
               images=[*[y_plot[select, idx] for idx in plot_idx],
-                      *[yp_plot[select, idx] for idx in pred_plot_idx]],
-              masks=[m_plot_final]*(len(plot_idx) + len(pred_plot_idx)),
-              cmaps=list(map(_get_plot_cmap, plot_names + pred_plot_names)),
-              centers=list(map(_get_plot_center, plot_names + pred_plot_names)),
-              limits=list(map(_get_plot_limits, plot_names + pred_plot_names)),
-              ylabels=plot_names + pred_plot_names, 
+                      *[yp_plot[select, idx] for idx in pred_plot_idx],
+                      *error_images],
+              masks=[m_plot_final]*(len(plot_idx) + len(pred_plot_idx) + len(error_images)),
+              cmaps=list(map(_get_plot_cmap, plot_names + pred_plot_names + error_names)),
+              centers=list(map(_get_plot_center, plot_names + pred_plot_names + error_names)),
+              limits=list(map(_get_plot_limits, plot_names + pred_plot_names + error_names)),
+              ylabels=plot_names + pred_plot_names + error_names, 
               xlabels=t_y_plot[select] if t_y_plot is not None else None,
               mask_kwargs=dict(colors= {0:None, 1:'r', 2:'b'}), classes= {1:'Bad', 2:'Event'}, #title=title_plot,
               backend=backend, numpy_backend_kwargs={'size':13, 'color':'black', 'xstep':1,
                                                      'labels':'grid', 'font':'OpenSans_Condensed-Regular.ttf'},
-              figsize=(27.5,10),
+              figsize=(24.5,10),
               matplotlib_backend_kwargs={'text_size':FONT_SIZE-3},
               stack_every=73, #Stack every year (approx.) 73*5=365
+              colorbar_labels = ([f'{NDVI} error', f'{NDVI}', 'B8A'] if show_error else [f'{NDVI}', 'B8A']) if PAPER_STYLE else None
             )
 
         if save_path is not None:                
@@ -363,10 +384,10 @@ def plot_prediction(x, masks, labels, y_pred,
             path= Path(save_path).resolve()
             path.mkdir(parents=True, exist_ok=True)
             if backend == 'numpy':
-                cv2.imwrite(str(path / f'{title_plot}.jpg'), arr[...,[2,1,0]])
+                cv2.imwrite(str(path / f'{title_plot}.png'), arr[...,[2,1,0]])
             else:
                 fig= arr[0]
-                fig.savefig(path / f'{title}.jpg', dpi=120, bbox_inches='tight')
+                fig.savefig(path / f'{title}.png', dpi=120, bbox_inches='tight')
                 plt.close(fig)
 
         #Plot weather

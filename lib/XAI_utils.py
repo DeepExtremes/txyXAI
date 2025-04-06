@@ -170,7 +170,7 @@ def event_at_positon(arr:np.ndarray, t:int, position:str='end') -> np.ndarray:
     elif position == 'all':
         return np.concatenate([arr[None]]*t, axis=0)
     else:
-        raise AssertionError(f'{positon=} must be one of ["end", "beginning", "all"]')
+        raise AssertionError(f'{position=} must be one of ["end", "beginning", "all"]')
         
 def clip_outliers(attributions:Union[np.ndarray, Tuple[np.ndarray]], outlier_perc:float=1, max_sample:int=5e6):
     '''

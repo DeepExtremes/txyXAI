@@ -81,7 +81,10 @@ class DeepExtremesXAILoader(ABC):
             assert event_is_N_days.sum() > N, f'Reduce {N=}, there are not enough cubes with that event'
             self.registry= self.registry[event_is_N_days]
             self.registry= self.registry.iloc[:N]
-            #print(self.registry.index)
+
+            # matching_indices = self.registry.index == "-58.17_-23.98"
+            # self.registry = self.registry[matching_indices]
+
             assert all([t in ['event', 'year-event', 'before', 'year-before', 'after', 'year-after']
                         for t in timesteps])
             self.timesteps= timesteps
