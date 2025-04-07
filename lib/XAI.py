@@ -22,7 +22,7 @@ setup_matplotlib(); #Create custom colormap, set default styles
 eps = 1e-7 
 
 #Changes some defaults to reproduce the style of the plots in the paper
-PAPER_STYLE= True
+PAPER_STYLE= False
 
 #Main XAI class
 class XAI():
@@ -193,7 +193,7 @@ class XAI():
                     start_idx+= n_in_features
 
             # TODO: Remove this
-            if '-58.17_-23.98' not in event: continue
+            # if '-58.17_-23.98' not in event: continue
                       
             #Iterate over input tensors
             for i, (attribution_item, input_item, feature_names_item, x_shape)\

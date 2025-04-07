@@ -650,7 +650,7 @@ class DeepExtremes(torch.utils.data.Dataset):
     def plot_last(self, select=slice(265,265+12,1)):
         'Plot last generated data dict'
         
-        setup_matplotlib();
+        setup_matplotlib()
         
         #Plot txy
         import copy

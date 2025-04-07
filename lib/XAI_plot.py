@@ -17,7 +17,7 @@ from .XAI_utils import event_at_positon
 from .data_utils import setup_matplotlib, _get_plot_cmap, _get_plot_center, _get_plot_limits
 
 #Changes some defaults to reproduce the style of the plots in the paper
-PAPER_STYLE= True
+PAPER_STYLE= False
 
 #For earthnet-models-pytorch
 EMP= False
@@ -77,7 +77,8 @@ def plot_attribution(a_plot, t_plot, l_plot, p_plot, m_plot, x_shape, y_shape, f
             else:
                 #selected_ts= (m_plot!=0).sum(axis=(0,1,3)).argmax(axis=0)
                 selected_ts= np.argwhere((m_plot!=0).sum(axis=(0,1,3)))[:,0]
-            offsets= (-9, 4) #(-30, 4)
+            offsets= (-9, 4) #For _3d
+            # offsets=(-40, 4) #For _1d
             plot_ts= np.s_[max(0, np.min(selected_ts) + offsets[0]):
                                   min(l_plot.shape[2], np.max(selected_ts) + offsets[1])]
             if EMP: plot_ts= slice(60,84,None) #For earthnet-models-pytorch
@@ -127,7 +128,7 @@ def plot_attribution(a_plot, t_plot, l_plot, p_plot, m_plot, x_shape, y_shape, f
         #Compute automatic figsize
         #timestep=None #TODO
         figsize=(min(max(8, 15*x_shape[0]/100), 30), min(max(8, 15*x_shape[-1])/10, 20)) #(15,15)
-        if PAPER_STYLE: figsize=(figsize[0]/2,figsize[1])
+        # if PAPER_STYLE: figsize=(figsize[0]/2,figsize[1])
         plot_ts_1d= plot_ts
         fig, axes= plot_attributions_1d( 
             a_plot[:,plot_ts_1d], t_plot[plot_ts_1d], l_plot[plot_ts_1d], p_plot[plot_ts_1d], m_plot[plot_ts_1d], 
@@ -297,6 +298,8 @@ def plot_attributions_nd(data:np.ndarray, x_shape:List[int], y_shape:List[int],
     
     sns.barplot(attr_df_ri_filtered, ax=ax, x=x, y=y, hue='Output class',
                 order=sorted_input_features, hue_order=class_names, orient=orientation)
+    if PAPER_STYLE: 
+        plt.ticklabel_format(axis='x', style='sci', scilimits=(-3, 3))
     
     if orientation in ('v', 'vertical'):
         with warnings.catch_warnings():  #Raises warning in latest Matplotlib that we can ignore
@@ -307,8 +310,9 @@ def plot_attributions_nd(data:np.ndarray, x_shape:List[int], y_shape:List[int],
         sns.move_legend(ax, "lower right")
     #ax.legend([],[], frameon=False) #Remove legend?
     ax.grid(True)
-    ax.set_title('Attribution averaged (with CI) over all other dimensions' + 
-                 (f' (top {plot_first_N})' if plot_first_N < len(attr_df_ri) else ''))
+    if not PAPER_STYLE:
+        ax.set_title('Attribution averaged (with CI) over all other dimensions' + 
+                    (f' (top {plot_first_N})' if plot_first_N < len(attr_df_ri) else ''))
     return fig, ax
     
 def plot_attributions_1d(attributions:np.ndarray, #(out classes, in t, in features)
@@ -542,7 +546,7 @@ def plot_attributions_1d(attributions:np.ndarray, #(out classes, in t, in featur
                      x=inputs[:,f], y=attr[...,f].T, y_is_attr=True)
         
     #Figure-wide configuration
-    if PAPER_STYLE: axes[-1].set_xticks(timesteps[::(ti//10 if ti//10 else 1)])
+    # if PAPER_STYLE: axes[-1].set_xticks(timesteps[::(ti//10 if ti//10 else 1)])
     else: axes[-1].set_xticks(timesteps[::(ti//30 if ti//30 else 1)])
     title= 'Attributions' if title is None else title
     if not PAPER_STYLE: fig.suptitle(title, y=0.91, size=13)
@@ -646,9 +650,9 @@ def plot_attributions_3d(attributions:np.ndarray, inputs:np.ndarray, labels:np.n
     if PAPER_STYLE: backend='matplotlib'
 
     # TODO: Remove this
-    import sys
-    sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
-    from visualization import plot_maps
+    # import sys
+    # sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
+    # from visualization import plot_maps
 
     arr= plot_maps(
         images= images,
@@ -658,14 +662,15 @@ def plot_attributions_3d(attributions:np.ndarray, inputs:np.ndarray, labels:np.n
         limits= list(map(_get_plot_limits, row_names)),
         ylabels= row_names, 
         xlabels= xlabels if xlabels is not None else list(range(len(t_plot_t))),
-        mask_kwargs=dict(colors= {0:None, 1:'r'}), figsize=(19,10), backend=backend,
+        mask_kwargs=dict(colors= {0:None, 1:'r'}), backend=backend,
         numpy_backend_kwargs={'size':13, 'color':'black', 
                               'xstep':4, 'ystep':1, 
                               'labels':'grid', 'font':'OpenSans_Condensed-Regular.ttf'},
         max_text_width=20,
         cmap_kwargs=dict(nan_color=None, inf_color=None, zero_color=None), #Do not color bad pixels
         classes=None if PAPER_STYLE else {1:'Masked outputs'},
-        title=None if PAPER_STYLE else None,
+        title=None if PAPER_STYLE else title,
+        figsize=(17,10), #(19,10) not using the mask, (16,10) using the mask
         **kwargs)
 
     #Save figure

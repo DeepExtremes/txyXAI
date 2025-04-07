@@ -204,3 +204,33 @@ def clip_outliers(attributions:Union[np.ndarray, Tuple[np.ndarray]], outlier_per
         
     #Return
     return tuple(attributions_final) if is_tuple else attributions_final[0], attr_min, attr_max
+
+def create_baselines(x, baselines_config):
+    """
+    Create baselines for XAI methods based on configuration.
+    
+    :param x: Input tensor or tuple of tensors
+    :param baselines_config: Configuration for baselines, can be:
+                            - None: use zeros
+                            - List of indices or None for each input tensor
+    :return: Baseline tensor or tuple of baseline tensors
+    """
+    if isinstance(x, tuple):
+        result = []
+        for i, xi in enumerate(x):
+            if i < len(baselines_config):
+                if baselines_config[i] is None:
+                    result.append(torch.zeros_like(xi))
+                else:
+                    # Use specified channels as baseline
+                    indices = baselines_config[i]
+                    baseline = torch.zeros_like(xi)
+                    for j, idx in enumerate(indices):
+                        if idx is not None:
+                            baseline[:, j] = xi[:, idx]
+                    result.append(baseline)
+            else:
+                result.append(torch.zeros_like(xi))
+        return tuple(result)
+    else:
+        return torch.zeros_like(x)

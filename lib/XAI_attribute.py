@@ -6,7 +6,7 @@ import numpy as np
 from tqdm.auto import tqdm
 import copy
 import torch 
-from .XAI_utils import get_agg_mask
+from .XAI_utils import get_agg_mask, create_baselines
     
 #Before, this was just x.T, but that is now deprecated
 transpose_all= lambda x: x.permute(*torch.arange(x.ndim - 1, -1, -1))
@@ -65,16 +65,6 @@ def attribute(config:dict, model:torch.nn.Module, dataloader:torch.utils.data.Da
                    cross_agg=cross_agg, using_mask=agg_mode!='none', 
                    is_GP=final_activation in ['ExactGP', 'ApproximateGP'], ignore_classes=ignore_classes)
     xai_method= globals()[config['xai']['type']](model_wrapper)
-
-    #We cannot easily pass functions or arrays as parameters, so let's create here extra needed XAI parameters
-    #depending on the method
-    if config['xai']['type'] in ['GradientShap']:
-        config['xai']['params']= {**config['xai']['params'],
-            'baselines': lambda x: torch.zeros_like(x) if len(x)==1 else tuple([torch.zeros_like(xi) for xi in x])}
-    
-    if debug: 
-        print(f" > Running XAI method: {config['xai']['type']}, "
-              f"with parameters: {config['xai']['params']}")
     
     #Iterate over samples and output dimensions (after aggregation)
     model.eval()
@@ -186,8 +176,21 @@ def attribute(config:dict, model:torch.nn.Module, dataloader:torch.utils.data.Da
             #for the specific output that is being attributed
             assert len(attr_target) == 1, f'The mask indexing below must be fixed for {len(attr_target)}>1'
             if mask is None or torch.any(mask[0, attr_target[0]]):
+                #Let's create here the baselines for the XAI methods that need them
+                baselines = None
+                if config['xai']['type'] in ['GradientShap', 'IntegratedGradients']:
+                    # Check if custom baselines are defined
+                    if 'baselines' in config['xai'] and config['xai']['baselines'] is not None:
+                        baselines = create_baselines(x, config['xai']['baselines'])
+                    else:
+                        baselines = torch.zeros_like(x) if len(x)==1 else tuple([torch.zeros_like(xi) for xi in x])
+                if debug: 
+                    print(f" > Running XAI method: {config['xai']['type']}, "
+                        f"with parameters: {config['xai']['params']}")
+                    
                 attr= xai_method.attribute(x[0] if len(x)==1 else x, target=attr_target[::-1], 
-                                       additional_forward_args=mask, **config['xai']['params'])
+                            additional_forward_args=mask, **config['xai']['params'], 
+                            **({'baselines': baselines} if baselines is not None else {}))
             else: #Else set attribution to nan
                 attr= tuple(torch.clone(a).detach() for a in default_attr)
                 

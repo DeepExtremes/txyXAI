@@ -133,16 +133,16 @@ class ModelManager():
         #Reset plotting to defaults (just one plot per epoch, and not save plots)
         self.model.save_path, self.model.plot_every_epoch= None, 1
         
-    def inference(self, subset='test'):
-        # Inference 
-        assert subset in ['train', 'val', 'test']
-        loader= {'train':self.train_loader, 'val':self.val_loader, 'test':self.test_loader}[subset]
-        evaluator = PytorchEvaluator(self.config, self.model, loader)
+    # def inference(self, subset='test'):
+    #     # Inference 
+    #     assert subset in ['train', 'val', 'test']
+    #     loader= {'train':self.train_loader, 'val':self.val_loader, 'test':self.test_loader}[subset]
+    #     evaluator = PytorchEvaluator(self.config, self.model, loader)
 
-        inference_outputs = evaluator.inference()
-        evaluator.evaluate(inference_outputs)
+    #     inference_outputs = evaluator.inference()
+    #     evaluator.evaluate(inference_outputs)
         
-        return inference_outputs
+    #     return inference_outputs
     
     def load_custom(self, ckpt=None):
         path= Path(self.cp_path) / ckpt

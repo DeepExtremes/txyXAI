@@ -16,7 +16,7 @@ NDVI='kNDVI' #['NDVI' or 'kNDVI']
 FONT_SIZE= 20
 
 #Changes some defaults to reproduce the style of the plots in the paper
-PAPER_STYLE= True
+PAPER_STYLE= False
 
 #Get the nth element (first by default) of every tuple in a list of tuples
 get_nth= lambda l, n=0: [i[n] for i in l]
@@ -352,9 +352,9 @@ def plot_prediction(x, masks, labels, y_pred,
             t_y_plot= [f'{ty} [{e}]' if e!=0 else ty for ty, e in zip(t_y_plot, t_events_plot)]
 
         # TODO: Remove this
-        import sys
-        sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
-        from visualization import plot_maps
+        # import sys
+        # sys.path.insert(0, "/home/oscar/txyvis/txyvis") 
+        # from visualization import plot_maps
 
         #Plot maps
         pred_plot_idx, pred_plot_names= plot_idx, [f'pred. {n}' for n in plot_names]
