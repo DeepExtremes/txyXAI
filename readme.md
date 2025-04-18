@@ -1,5 +1,7 @@
 # txyXAI
 
+[![DOI](https://zenodo.org/badge/796741544.svg)](https://doi.org/10.5281/zenodo.15242306)
+
 EXplainable Artificial intelligence for spatio-temporal data. If you use any of this code, please reference the following paper:
 
 >Pellicer-Valero, O. J., Fernández-Torres, M. A., Ji, C., Mahecha, M. D., & Camps-Valls, G. (2024). Explainable Earth Surface Forecasting under Extreme Events. arXiv preprint arXiv:2410.01770. URL: https://arxiv.org/abs/2410.01770
