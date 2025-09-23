@@ -22,7 +22,7 @@ class DeepExtremes(torch.utils.data.Dataset):
         #Paths and dates
         self.datacubes_path= Path(config['data']['datacubes_path'])
         registry_path= Path(config['data']['registry_path'])
-        registry_read_until= datetime.strptime(config['data']['registry_read_until'], '%m/%d/%Y')
+        registry_read_until= None # Disabled because the final dataset does not have a creation / modification date
         if config['data']['test_start_date'] is None:
             self.test_start_date= None
         else:
@@ -50,16 +50,18 @@ class DeepExtremes(torch.utils.data.Dataset):
         #Keep specific cube versions
         versions= config['data']['versions']
         if versions is not None: self.registry= self.registry[self.registry.version.isin(versions)]
-        #For replicability, keep only cubes that were generated up to a certain date
-        self.registry['creation_date']= pd.to_datetime(self.registry['creation_date'])#, format='%d%b%Y:%H:%M:%S.%f')
-        self.registry['modification_date']= pd.to_datetime(self.registry['modification_date'])
-        self.registry= self.registry[self.registry.modification_date < registry_read_until]        
         
         #Get a list of all downloaded minicube ids and keep only those that are also in the csv (just to be sure)
-        cubes_list= list(self.datacubes_path.glob('deepextremes-minicubes/*/*/*.zarr'))
-        assert len(cubes_list), f'No files found at {self.datacubes_path} with pattern "*/*.zarr"'
-        cubes_list= ['/'.join(c.parts[-4:]) for c in cubes_list]
-        self.registry= self.registry[self.registry.path.isin(cubes_list)]
+        cubes_list= list(self.datacubes_path.glob('*.zarr'))
+        assert len(cubes_list), f'No files found at {self.datacubes_path} with pattern "*.zarr"'
+        cubes_path_dict= {'_'.join(str(c.name).split('_')[1:3]) : str(c.name) for c in cubes_list}
+        print(list(cubes_path_dict.keys())[:10], self.registry.index[:10])
+        self.registry["path"] = self.registry.index.map(cubes_path_dict.get)
+        len_before = len(self.registry)
+        self.registry = self.registry.dropna(subset=["path"])
+        len_after = len(self.registry)
+        if len_before != len_after:
+            print(f"Warning: Rows in the csv before keeping only available cubes: {len_before}, after: {len_after}")
         
         #Load all info from config file    
         #Get only training / val data
