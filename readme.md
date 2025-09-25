@@ -4,7 +4,7 @@
 
 EXplainable Artificial intelligence for spatio-temporal data. If you use any of this code, please reference the following paper:
 
->Pellicer-Valero, O. J., Fernández-Torres, M. A., Ji, C., Mahecha, M. D., & Camps-Valls, G. (2024). Explainable Earth Surface Forecasting under Extreme Events. arXiv preprint arXiv:2410.01770. URL: https://arxiv.org/abs/2410.01770
+>Pellicer-Valero, O. J., Fernández-Torres, M. A., Ji, C., Mahecha, M. D., & Camps-Valls, G. (2025). Explainable Earth Surface Forecasting under Extreme Events. Earth's Future. https://doi.org/10.1029/2024EF005446
 
 This repository contains code to:
  - Train deep learning models that use temporal data (t), spatial data (xy), spatio-temporal data (txy) or all at the same time (see [The DeepExtremeCubes dataset](#the-deepextremecubes-dataset) for an example of such data).
